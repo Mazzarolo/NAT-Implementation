@@ -20,13 +20,13 @@ class Tabela:
     
     def whichProtocol(self, pkt):
         if pkt.haslayer(TCP):
-            return "TCP"
+            return TCP
         elif pkt.haslayer(ICMP):
-            return "ICMP"
+            return ICMP
         elif pkt.haslayer(UDP):
-            return "UDP"
+            return UDP
         else:
-            return "Outros"
+            return None
     
     def jaExiste(self, portPriv):
         for reg in self.registros:
@@ -38,15 +38,12 @@ class Tabela:
         endPriv = pkt[IP].src
         endExt = pkt[IP].dst
         protocol = self.whichProtocol(pkt)
-        if protocol == "ICMP":
+        if protocol == ICMP:
             portPriv = pkt[ICMP].id
             portExt = pkt[ICMP].id
-        elif protocol == "TCP":
-            portPriv = pkt[TCP].sport
-            portExt = pkt[TCP].dport
-        elif protocol == "UDP":
-            portPriv = pkt[UDP].sport
-            portExt = pkt[UDP].dport
+        elif protocol != None:
+            portPriv = pkt[protocol].sport
+            portExt = pkt[protocol].dport
         else:
             print("Bosta cu merda mijo")
             return None
@@ -62,7 +59,10 @@ class Tabela:
             self.registros.append(novoRegistro)
 
     def Print(self):
+        i = 0
         for reg in self.registros:
+            print(i, end=' : ')
             reg.Print();
+            i += 1;
 
         print()
