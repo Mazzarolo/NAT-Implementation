@@ -34,9 +34,11 @@ def printInfo(pkt):
 def NAT(pkt):
     if pkt.sniffed_on == 'r-eth1': #server -> host (pacote tah voltando)
         pkt[IP].src = get_if_addr(conf.iface)
+        del pkt[IP].chksum
         protocol = whichProtocol(pkt)
         for reg in table.registros:
             if (protocol != None and protocol != ICMP) and reg.portPriv == pkt[protocol].sport:
+                del pkt[protocol].chksum
                 pkt[protocol].sport = pkt[protocol].dport #inverte as porta
                 pkt[protocol].dport = reg.portPriv
                 pkt[IP].dst = reg.endPriv #coloca o endereco do host
