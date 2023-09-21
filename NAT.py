@@ -30,28 +30,29 @@ def printInfo(pkt):
 def NAT(pkt):
     routerIp = get_if_addr(conf.iface)
     protocol = whichProtocol(pkt)
+    pkt[Ether].src = None
+    pkt[Ether].dst = None
+    pkt[IP].chksum = None
+    pkt[protocol].chksum = None
     if pkt.sniffed_on == 'r-eth1': #server -> host (pacote tah voltando)
-        pkt[Ether].dst = None
         pkt[IP].src = routerIp
-        del pkt[IP].chksum
         
         for reg in table.registros:
             if protocol != None and reg.portPriv == pkt[protocol].sport:
                 pkt[protocol].sport = pkt[protocol].dport
                 pkt[protocol].dport = reg.portPriv
                 pkt[IP].dst = reg.endPriv
-                del pkt[protocol].chksum
 
         sendp(pkt, iface='r-eth0')
     else:
-        pkt[Ether].dst = None
         if pkt[IP].src != routerIp:
             table.adicionar(pkt, pkt[protocol].sport, pkt[protocol].dport)
         pkt[IP].src = routerIp
 
         sendp(pkt, iface='r-eth1')
     
-    table.Print()
+    print('source = ', pkt[IP].src)
+    print('destiny = ', pkt[IP].dst)
     
 
 
