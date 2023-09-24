@@ -28,8 +28,8 @@ class BasicTopo(Topo):
 def run():
     "Trabalho 2: NAT"
     net = Mininet(topo=BasicTopo(), controller=None)
-    net.get('server1').cmd('iperf -s -p 8888 &')
-    net.get('server2').cmd('iperf -s -u -p 8844 &')
+    net.get('server1').cmd('iperf -s -o server1.txt -p 8888 &')
+    net.get('server2').cmd('iperf -s -o server2.txt -u -p 8844 &')
         
     for _, v in net.nameToNode.items():
      for itf in v.intfList():

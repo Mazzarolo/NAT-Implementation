@@ -10,7 +10,8 @@ class Registro:
         self.protoTipo = protoTipo;
 
     def Print(self):
-        print(self.endPriv, self.portPriv, self.endExt, self.portExt, self.protoTipo)
+        print( "self.endPriv self.portPriv self.endExt self.portExt self.protoTipo")
+        print(f"{self.endPriv} {self.portPriv} {self.endExt} {self.portExt} {self.protoTipo}")
 
 
 class Tabela:
@@ -40,6 +41,7 @@ class Tabela:
             portExt = ext
         else:
             print("Bosta cu merda mijo")
+            pkt.summary()
             return None
         if not self.jaExiste(portPriv):
             novoRegistro = Registro(endPriv, portPriv, endExt, portExt, protocol)
@@ -51,6 +53,8 @@ class Tabela:
         novoRegistro = self.getInfo(pkt, priv, ext)
         if novoRegistro != None:
             self.registros.append(novoRegistro)
+            print("Novo registro:")
+            novoRegistro.Print()
 
     def Print(self):
         i = 0
