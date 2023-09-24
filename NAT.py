@@ -35,22 +35,22 @@ def NAT(pkt):
     pkt[IP].chksum = None
     pkt[protocol].chksum = None
     if pkt.sniffed_on == 'r-eth1': #server -> host (pacote tah voltando)
-        pkt[IP].src = routerIp
-        
         for reg in table.registros:
             if protocol != None and reg.portPriv == pkt[protocol].sport:
                 pkt[protocol].sport = pkt[protocol].dport
                 pkt[protocol].dport = reg.portPriv
                 pkt[IP].dst = reg.endPriv
+                pkt[IP].src = reg.endExt
+                table.registros.remove(reg)
 
         sendp(pkt, iface='r-eth0')
     else:
-        if pkt[IP].src != routerIp:
+        if pkt[IP].src[0] != '8' and pkt[IP].src != routerIp:
             table.adicionar(pkt, pkt[protocol].sport, pkt[protocol].dport)
         pkt[IP].src = routerIp
 
         sendp(pkt, iface='r-eth1')
-    
+    #table.Print()
     print('source = ', pkt[IP].src)
     print('destiny = ', pkt[IP].dst)
     
