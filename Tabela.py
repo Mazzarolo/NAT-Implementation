@@ -1,6 +1,7 @@
 from scapy.all import *
 from scapy.layers.inet import TCP, UDP, IP
 
+
 class Registro:
     def __init__(self, endPriv, portPriv, endExt, portExt, protoTipo):  # para fazer:
         self.endPriv = endPriv;                                         "fazer timeout"
@@ -10,8 +11,7 @@ class Registro:
         self.protoTipo = protoTipo;
 
     def Print(self):
-        print( "self.endPriv self.portPriv self.endExt self.portExt self.protoTipo")
-        print(f"{self.endPriv} {self.portPriv} {self.endExt} {self.portExt} {self.protoTipo}")
+        print(self.endPriv, self.portPriv, self.endExt, self.portExt, self.protoTipo)
 
 
 class Tabela:
@@ -19,12 +19,7 @@ class Tabela:
         self.registros = []
     
     def whichProtocol(self, pkt):
-        if pkt.haslayer(TCP):
-            return TCP
-        elif pkt.haslayer(UDP):
-            return UDP
-        else:
-            return None
+        return TCP if pkt.haslayer(TCP) else(UDP if pkt.haslayer(UDP) else None)
     
     def jaExiste(self, portPriv):
         for reg in self.registros:
@@ -40,8 +35,7 @@ class Tabela:
             portPriv = priv
             portExt = ext
         else:
-            print("Bosta cu merda mijo")
-            pkt.summary()
+            print("cachorro")
             return None
         if not self.jaExiste(portPriv):
             novoRegistro = Registro(endPriv, portPriv, endExt, portExt, protocol)
@@ -53,8 +47,6 @@ class Tabela:
         novoRegistro = self.getInfo(pkt, priv, ext)
         if novoRegistro != None:
             self.registros.append(novoRegistro)
-            print("Novo registro:")
-            novoRegistro.Print()
 
     def Print(self):
         i = 0
