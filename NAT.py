@@ -4,6 +4,7 @@ from scapy.all import *
 from scapy.layers.inet import IP
 from scapy.layers.l2 import Ether
 from Tabela import *
+from datetime import datetime
 
 import os
 
@@ -11,6 +12,7 @@ os.system('ifconfig r-eth0 mtu 10000 up && ifconfig r-eth1 mtu 10000 up')
 
 table = Tabela()
 
+conf.verb = 0
 
 def printInfo(pkt):
     print(f"IP src: {pkt[IP].src}")
@@ -23,6 +25,7 @@ def printInfo(pkt):
     else:
         print("cachorro")
 
+counter = 0
 
 def NAT(pkt):
     routerIp = get_if_addr(conf.iface)
@@ -47,11 +50,13 @@ def NAT(pkt):
         pkt[IP].src = routerIp
 
         sendp(pkt, iface='r-eth1')
-    table.Print()
+    global counter
+    counter += 1
+    if counter > 100:
+        print(f"[{datetime.now()}]")
+        counter = 0
+        table.Print()
     #print('source = ', pkt[IP].src)
     #print('destiny = ', pkt[IP].dst)
-    
-
-
 
 sniff(iface=["r-eth0","r-eth1"], filter='ip',  prn=NAT)

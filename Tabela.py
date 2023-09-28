@@ -11,7 +11,7 @@ class Registro:
         self.protoTipo = protoTipo;
 
     def Print(self):
-        print(self.endPriv, self.portPriv, self.endExt, self.portExt, self.protoTipo)
+        print(f"{self.endPriv:<15} {self.portPriv:8} {self.endExt:<15} {self.portExt:7} {self.protoTipo.__qualname__}")
 
 
 class Tabela:
@@ -35,7 +35,8 @@ class Tabela:
             portPriv = priv
             portExt = ext
         else:
-            print("cachorro")
+            print("cachorro: ", end='')
+            pkt.show2()
             return None
         if not self.jaExiste(portPriv):
             novoRegistro = Registro(endPriv, portPriv, endExt, portExt, protocol)
@@ -49,9 +50,11 @@ class Tabela:
             self.registros.append(novoRegistro)
 
     def Print(self):
-        i = 0
+        if len(self.registros) > 0:
+            print(f"  i {'endPriv':<15} portPriv {'endExt':<15} portExt protoTipo")
+        i = 1
         for reg in self.registros:
-            print(i, end=' : ')
+            print(f"{i:3} ", end='')
             reg.Print();
             i += 1;
 
