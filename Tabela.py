@@ -4,10 +4,10 @@ from scapy.layers.inet import TCP, UDP, IP
 
 class Registro:
     def __init__(self, endPriv, portPriv, endExt, portExt, protoTipo):  # para fazer:
-        self.endPriv = endPriv;                                         "fazer timeout"
-        self.portPriv = portPriv
+        self.endPriv = endPriv;
+        self.portPriv = portPriv;
         self.endExt = endExt;
-        self.portExt = portExt
+        self.portExt = portExt;
         self.protoTipo = protoTipo;
 
     def Print(self):
@@ -19,7 +19,7 @@ class Tabela:
         self.registros = []
     
     def whichProtocol(self, pkt):
-        return TCP if pkt.haslayer(TCP) else(UDP if pkt.haslayer(UDP) else None)
+        return TCP if pkt.haslayer(TCP) else (UDP if pkt.haslayer(UDP) else None)
     
     def jaExiste(self, portPriv):
         for reg in self.registros:
