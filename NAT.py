@@ -25,33 +25,33 @@ def printInfo(pkt):
 
 
 def NAT(pkt):
-    routerIp = get_if_addr(conf.iface)
+    routerIp = '8.8.254.254'
     protocol = table.whichProtocol(pkt)
     pkt[Ether].src = None
     pkt[Ether].dst = None
-    pkt[IP].chksum = None
-    pkt[protocol].chksum = None
+
     if pkt.sniffed_on == 'r-eth1': #server -> host (pacote tah voltando)
         for reg in table.registros:
             if protocol != None and reg.portPriv == pkt[protocol].sport:
+                pkt[IP].chksum = None
+                pkt[IP].len = None
+                pkt[protocol].chksum = None
                 pkt[protocol].sport = pkt[protocol].dport
                 pkt[protocol].dport = reg.portPriv
                 pkt[IP].dst = reg.endPriv
                 pkt[IP].src = reg.endExt
+                
                 table.registros.remove(reg)
-
-        sendp(pkt, iface='r-eth0')
-    else:
-        if pkt[IP].src != routerIp and pkt[IP].src[0] != '8':
-            table.adicionar(pkt, pkt[protocol].sport, pkt[protocol].dport)
+        
+        sendp(pkt, verbose=0, iface='r-eth0')
+    elif pkt[IP].src != routerIp and pkt[IP].src[0] != '8':
+        table.adicionar(pkt, pkt[protocol].sport, pkt[protocol].dport)
         pkt[IP].src = routerIp
-
-        sendp(pkt, iface='r-eth1')
-    table.Print()
+        sendp(pkt, verbose=0, iface='r-eth1')
+        
+    #table.Print()
     #print('source = ', pkt[IP].src)
     #print('destiny = ', pkt[IP].dst)
-    
-
 
 
 sniff(iface=["r-eth0","r-eth1"], filter='ip',  prn=NAT)
